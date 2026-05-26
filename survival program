@@ -69,6 +69,8 @@ LOCATIONS = {
     }
 }
 
+#===============================================================
+
 def user_choice(prompt, valid_choices):
     
     while True:
@@ -112,6 +114,7 @@ def hunt(player, location):
         
     print(f"Player's health: {player["health"]}\n Player's food: {player["food"]}")
 
+#===============================================================
 
 player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
 player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n", 
