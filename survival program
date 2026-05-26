@@ -90,19 +90,47 @@ def travel():
     print(f"You travel to {loc['name']}...{loc['desc']}!")
     return choice
 
-def hunt(location, animal):
-    location_choice
+def hunt(player, location):
+    animal_key = random.choice(LOCATIONS[location]["animals"])
+    animal = ANIMALS[animal_key]
+
+    print(f"You encounter {animal_key}!")
+
+    encounter_roll = random.random()
+    if encounter_roll > animal["encounter_chance"]:
+        print(f"However it escapes before you can act...")
+        return
+
+    risk = random.random()
+    if risk > animal["risk"]:
+        print(f"Hunt failed! The {animal_key} damages you for 20 and escapes.")
+        player["health"] -= 20
+    else:
+        print(f"Hunt succeeded! You have successfuly hunted {animal_key}")
+        print(f"You have gained {animal["meat_kg"]} kilograms of meat.")
+        player["food"] += animal["meat_kg"]
+        
+    print(f"Player's health: {player["health"]}\n Player's food: {player["food"]}")
+
 
 player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
 player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n", 
                                EXPERTISES.keys()
                                )
 
+player = {
+    "name": player_name,
+    "expertise": player_expertise,
+    "health": 100,
+    "food": 0
+}
+
+
 print(f"Alright, {player_name}! You are about to set out on a grand survival adventure, use your superb {EXPERTISES[player_expertise]['name']} skills to survive and recruit strangers into your crew!")
 
-travel()
+current_location = travel()
 
+hunt(player, current_location)
 
-
-
+print(f"You continue your venture through the {current_location}...")
 
