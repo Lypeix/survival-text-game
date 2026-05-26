@@ -104,15 +104,15 @@ def hunt(player, location):
         return
 
     risk = random.random()
-    if risk > animal["risk"]:
+    if risk < animal["risk"]:
         print(f"Hunt failed! The {animal_key} damages you for 20 and escapes.")
         player["health"] -= 20
     else:
         print(f"Hunt succeeded! You have successfuly hunted {animal_key}")
-        print(f"You have gained {animal["meat_kg"]} kilograms of meat.")
+        print(f"You have gained {animal['meat_kg']} kilograms of meat.")
         player["food"] += animal["meat_kg"]
         
-    print(f"Player's health: {player["health"]}\n Player's food: {player["food"]}")
+    print(f"Player's health: {player['health']}\n Player's food: {player['food']}")
 
 #===============================================================
 
