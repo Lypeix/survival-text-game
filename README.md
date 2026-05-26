@@ -5,4 +5,4 @@ Features:
 - Animal encounters
 - Risk-based survival mechanics
 - Functions
-- Crew Mechanics (in progress)
+- Crew mechanics (in progress)
