@@ -81,7 +81,7 @@ def user_choice(prompt, valid_choices):
             print(f"Invalid choice! Choose from: {', '.join(valid_choices)}")
 
 def location_choice():
-    choice = user_choice("Where shall you head to?\n- Riverside\n- Forest\n- Plains\n",
+    choice = user_choice("Where shall you head to?\n- Riverside\n- Forest\n- Plains\n>",
                               LOCATIONS.keys()
                               )
     return choice
@@ -96,7 +96,7 @@ def hunt(player, location):
     animal_key = random.choice(LOCATIONS[location]["animals"])
     animal = ANIMALS[animal_key]
 
-    print(f"You encounter {animal_key}!")
+    print(f"You encounter a {animal_key}!")
 
     encounter_roll = random.random()
     if encounter_roll > animal["encounter_chance"]:
@@ -112,12 +112,34 @@ def hunt(player, location):
         print(f"You have gained {animal['meat_kg']} kilograms of meat.")
         player["food"] += animal["meat_kg"]
         
-    print(f"Player's health: {player['health']}\n Player's food: {player['food']}")
+    print(f"Player's health: {player['health']}\nPlayer's food: {player['food']}")
 
-#===============================================================
+def show_status(player, current_location):
+    print("\n-=-!STATUS!-=-")
+    print(f"Location: {LOCATIONS[current_location]['name']}")
+    print(f"Name: {player['name']}")
+    print(f"Expertise: {player['expertise']}")
+    print(f"Food Amount: {player['food']} kg")
+    print(f"Health: {player['health']}")
+
+def take_action():
+    return user_choice(
+        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Quit\n>",
+        ["hunt", "rest", "travel", "quit"]
+    )
+
+def rest(player):
+    heal_amount = 10
+    player["health"] += heal_amount
+
+    if player["health"] > 100:
+        player["health"] = 100
+        
+    print(f"You rest and recover {heal_amount} HP! Your health is now {player['health']}")
+ #===============================================================
 
 player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
-player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n", 
+player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n>", 
                                EXPERTISES.keys()
                                )
 
@@ -133,7 +155,25 @@ print(f"Alright, {player_name}! You are about to set out on a grand survival adv
 
 current_location = travel()
 
-hunt(player, current_location)
+while True:
+    show_status(player, current_location)
 
-print(f"You continue your venture through the {current_location}...")
+    if player["health"] <= 0:
+        print("You have collapsed to the ground as the birds sing and your injuries worsen... GAME OVER!")
+        break
+
+    action = take_action()
+    
+    if action == "hunt":
+        hunt(player, current_location)
+
+    elif action == "rest":
+        rest(player)
+
+    elif action == "travel":
+        current_location = travel()
+    
+    elif action == "quit":
+        print("You have returned from the Survival Grounds. Game Ended!")
+        break
 
