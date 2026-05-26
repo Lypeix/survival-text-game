@@ -1,6 +1,8 @@
 Survival game in progress
 
-Features
+Features:
 - Location system
 - Animal encounters
-- Risk-based survival mechanics (in progress)
+- Risk-based survival mechanics
+- Functions
+- Crew Mechanics (in progress)
