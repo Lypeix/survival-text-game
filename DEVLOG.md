@@ -1,5 +1,19 @@
 LOG BOOK
 
+26.05.2026 PROGRESS (DAY 1):
+
+- Created the initial survival game concept and flow
+- Added core game data dictionaries:
+  - ANIMALS
+  - EXPERTISES
+  - LOCATIONS
+- Defined animal stats like: meat amount, risk, encounter chance and damage.
+- Added location data with available animals and descriptions.
+- Rebuilt user_choice() from memory after using it in previous text-based-RPG project for reusable input validation.
+- Added location selection and travel logic with location_choice() and travel().
+- Created the first version of the player set-up with name, expertise, health, and food.
+- Built the hunting system using random animal encounters, risk rolls, health loss, and food gain.
+- Created following functions: user_choice(prompt, valid_choices), location_choice(), travel(), hunt(player, location), show_status(player, current_location), take_action(), rest(player)
 
 27.05.2026 PROGRESS (DAY 2):
 - Cleaner overall code structure and improved readability
