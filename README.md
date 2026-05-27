@@ -6,4 +6,4 @@ LOG BOOK
 - Expansion of functions: create_player(name, expertise), main()
 - Added expertises and working bonuses (improved encounter chance, lower injury risk, better loot scaling)
 - Rebuilt hunt function from memory
-- Fixed multiple syntax and logic bugs + issues
+- Fixed multiple syntax, logic and state-management bugs + issues
