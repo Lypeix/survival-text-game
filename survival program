@@ -5,25 +5,29 @@ ANIMALS = {
     "bear": {
         "meat_kg": 120,
         "risk": 0.85,
-        "encounter_chance": 0.1
+        "encounter_chance": 0.1,
+        "damage": 70
     },
     
     "deer": {
         "meat_kg": 70,
         "risk": 0.35,
-        "encounter_chance": 0.4
+        "encounter_chance": 0.4,
+        "damage": 10
     },
     
     "rabbit": {
-        "meat_kg": 1.2,
+        "meat_kg": 20,
         "risk": 0.15,
-        "encounter_chance": 0.5
+        "encounter_chance": 0.5,
+        "damage": 5
     },
     
     "boar": {
         "meat_kg": 55,
         "risk": 0.55,
-        "encounter_chance": 0.3
+        "encounter_chance": 0.3,
+        "damage": 30
     }
 
 }
@@ -37,7 +41,7 @@ EXPERTISES = {
 
     "hunter": {
         "name": "Hunter",
-        "hunt_risk_bonus": -0.25, 
+        "hunt_risk_bonus": 0.25, 
 
     },
 
@@ -95,23 +99,38 @@ def travel():
 def hunt(player, location):
     animal_key = random.choice(LOCATIONS[location]["animals"])
     animal = ANIMALS[animal_key]
+    
+    meat = animal["meat_kg"]
+    animal_encounter_chance = animal["encounter_chance"]
+    risk_value = animal["risk"]
 
-    print(f"You encounter a {animal_key}!")
+    expertise = player["expertise"]  
+    bonus = EXPERTISES[expertise]
 
-    encounter_roll = random.random()
-    if encounter_roll > animal["encounter_chance"]:
-        print(f"However it escapes before you can act...")
+    if "calorie_bonus" in bonus:
+        meat += bonus["calorie_bonus"]
+
+    encounter_chance = random.random() 
+
+    if "encounter_chance_bonus" in bonus:
+        animal_encounter_chance += bonus["encounter_chance_bonus"]
+
+    if encounter_chance > animal_encounter_chance:
+        print(f"You encounter a {animal_key}... but it escapes before you can act.")
         return
-
+    
     risk = random.random()
-    if risk < animal["risk"]:
-        print(f"Hunt failed! The {animal_key} damages you for 20 and escapes.")
-        player["health"] -= 20
+
+    if "hunt_risk_bonus" in bonus:
+        risk_value -= bonus["hunt_risk_bonus"]
+
+    if risk < risk_value:
+        print(f"You try to hunt down the {animal_key}, but it injures you for {animal['damage']} and escapes!")
+        player["health"] -= (animal["damage"])
     else:
-        print(f"Hunt succeeded! You have successfuly hunted {animal_key}")
-        print(f"You have gained {animal['meat_kg']} kilograms of meat.")
-        player["food"] += animal["meat_kg"]
-        
+        print(f"Hunt succeeded! You absolutely OBLITERATE the {animal_key} and take its remains with you")
+        player["food"] += meat
+
     print(f"Player's health: {player['health']}\nPlayer's food: {player['food']}")
 
 def show_status(player, current_location):
@@ -135,7 +154,7 @@ def rest(player):
     if player["health"] > 100:
         player["health"] = 100
         
-    print(f"You rest and recover {heal_amount} HP! Your health is now {player['health']}")
+    print(f"You rest and recover {heal_amount} HP! Your are now at {player['health']} HP!")
  #===============================================================
 
 player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
