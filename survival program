@@ -141,7 +141,7 @@ def show_status(player, current_location):
     print("\n-=-!STATUS!-=-")
     print(f"Location: {LOCATIONS[current_location]['name']}")
     print(f"Name: {player['name']}")
-    print(f"Expertise: {EXPERTISES[player["expertise"]]["name"]}")
+    print(f"Expertise: {EXPERTISES[player['expertise']]['name']}")
     print(f"Food Amount: {player['food']} kg")
     print(f"Health: {player['health']}")
 
@@ -160,6 +160,14 @@ def rest(player):
         
     print(f"You rest and recover {heal_amount} HP! Your are now at {player['health']} HP!")
 
+def create_player(name, expertise):
+        return {
+        "name": name,
+        "expertise": expertise,
+        "health": 100,
+        "inventory": {"food": 0, "berries": 0}
+    }
+
 #===============================================================
 
 def main():
@@ -168,14 +176,7 @@ def main():
                                 EXPERTISES.keys()
                                 )
 
-    player = {
-        "name": player_name,
-        "expertise": player_expertise,
-        "health": 100,
-        "food": 0,
-        "inventory": {}
-    }
-
+    player = create_player(player_name, player_expertise)
 
     print(f"Alright, {player_name}! You are about to set out on a grand survival adventure, use your superb {EXPERTISES[player_expertise]['name']} skills to survive and recruit strangers into your crew!")
 
