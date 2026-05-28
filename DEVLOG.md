@@ -25,3 +25,12 @@ LOG BOOK
    - Cook improves food gain scaling
 - Rebuilt hunt function from memory
 - Fixed multiple syntax, logic and state-management bugs + issues
+
+28.05.2026 PROGRESS (DAY 3):
+- Added option to disengage from animal encounter into the hunt function
+- Added 3 new animals (wolf, bison, moose)
+- Added loot&inventory system
+- Split show_status function into show_inventory and show_status
+- show_status no longer shows without player's input during take_action menu
+- Added hunger, depletes by 10-20 depending on action
+- Significantly reduced AI reliance
