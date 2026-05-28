@@ -6,30 +6,57 @@ ANIMALS = {
         "meat_kg": 120,
         "risk": 0.85,
         "encounter_chance": 0.1,
-        "damage": 70
+        "damage": 70,
+        "loot": ["bear fur", "bear claws", "bear fat"]
     },
     
     "deer": {
         "meat_kg": 70,
         "risk": 0.35,
         "encounter_chance": 0.4,
-        "damage": 10
+        "damage": 10,
+        "loot": ["deer hide", "antlers", "sinew"]
     },
     
     "rabbit": {
         "meat_kg": 20,
         "risk": 0.15,
         "encounter_chance": 0.5,
-        "damage": 5
+        "damage": 5,
+        "loot": ["rabbit hide", "rabbit foot", "small bones"]
     },
     
     "boar": {
         "meat_kg": 55,
         "risk": 0.55,
         "encounter_chance": 0.3,
-        "damage": 30
-    }
+        "damage": 30,
+        "loot": ["boar hide", "tusks", "thick bristles"]
+    },
 
+    "wolf": {
+        "meat_kg": 35,
+        "risk": 0.65,
+        "encounter_chance": 0.25,
+        "damage": 40,
+        "loot": ["wolf hide", "wolf fangs", "wolf pelt"]
+    },
+
+        "bison": {
+        "meat_kg": 180,
+        "risk": 0.75,
+        "encounter_chance": 0.15,
+        "damage": 60,
+        "loot": ["bison hide", "bison horns", "thick fur"]
+    },
+
+    "moose": {
+        "meat_kg": 140,
+        "risk": 0.70,
+        "encounter_chance": 0.18,
+        "damage": 55,
+        "loot": ["moose hide", "large antlers", "dense fur"]
+    }
 }
 
 EXPERTISES = {
@@ -56,19 +83,19 @@ EXPERTISES = {
 LOCATIONS = {
     "riverside": {
         "name": "Riverside",
-        "animals": ["rabbit", "deer"],
+        "animals": ["rabbit", "deer", "moose"],
         "desc": "A calm river cutting through the land. Life gathers here to drink and survive"
     },
 
     "forest": {
         "name": "Deep Forest",
-        "animals": ["bear", "deer", "boar", "rabbit"],
+        "animals": ["bear", "deer", "boar", "rabbit", "wolf", "moose"],
         "desc": "Dense, shadowed woods where every step feels watched. Dangerous, but full of life"
     },
 
     "plains": {
         "name": "Open Plains",
-        "animals": ["deer", "rabbit"],
+        "animals": ["deer", "rabbit", "boar", "bison", "wolf"],
         "desc": "Wide, wind-swept fields stretching endlessly under an open sky"
     }
 }
@@ -103,6 +130,7 @@ def hunt(player, location):
     meat = animal["meat_kg"]
     animal_encounter_chance = animal["encounter_chance"]
     risk_value = animal["risk"]
+    loot = animal["loot"]
 
     expertise = player["expertise"]  
     bonus = EXPERTISES[expertise]
@@ -115,40 +143,50 @@ def hunt(player, location):
     if "encounter_chance_bonus" in bonus:
         animal_encounter_chance += bonus["encounter_chance_bonus"]
 
-    print(f"You encounter a {animal_key}!")
+    answer =  user_choice(f"You spot a {animal_key}! Would you like to engage?\n Yes\n No\n>", ["yes", "no"])
+    if answer == "yes":
+        if encounter_roll > min(animal_encounter_chance, 1):
+            print(f"You slip up and the {animal_key} escapes before you can act...")
+            return
+        
+        risk = random.random()
 
-    if encounter_roll > min(animal_encounter_chance, 1):
-        print("but it escapes before you can act...")
-        return
-    
-    risk = random.random()
+        if "hunt_risk_bonus" in bonus:
+            risk_value -= bonus["hunt_risk_bonus"]
 
-    if "hunt_risk_bonus" in bonus:
-        risk_value -= bonus["hunt_risk_bonus"]
+        risk_value = max(risk_value, 0)
+        if risk < risk_value:
+            print(f"You try to hunt down the {animal_key}, but it injures you for {animal['damage']} and escapes!")
+            player["health"] -= (animal["damage"])
+        else:
+            print(f"Hunt succeeded! You absolutely OBLITERATE the {animal_key} and take its remains with you")
+            player['inventory']['food'] += meat
+            player['inventory']['loot'] += loot
 
-    risk_value = max(risk_value, 0)
-    if risk < risk_value:
-        print(f"You try to hunt down the {animal_key}, but it injures you for {animal['damage']} and escapes!")
-        player["health"] -= (animal["damage"])
+        print(f"Player's health: {player['health']}\nPlayer's food: {player['inventory']['food']}{player['inventory']['loot']}")
     else:
-        print(f"Hunt succeeded! You absolutely OBLITERATE the {animal_key} and take its remains with you")
-        player["food"] += meat
-
-    print(f"Player's health: {player['health']}\nPlayer's food: {player['food']}")
-
+        print("You decide it's not a good idea...")
+        return
 
 def show_status(player, current_location):
     print("\n-=-!STATUS!-=-")
     print(f"Location: {LOCATIONS[current_location]['name']}")
     print(f"Name: {player['name']}")
     print(f"Expertise: {EXPERTISES[player['expertise']]['name']}")
-    print(f"Food Amount: {player['food']} kg")
+    print(f"Hunger: {player['hunger']}")
     print(f"Health: {player['health']}")
+
+def show_inventory(player):
+    print("\n-=-!INVENTORY!-=-")
+    print(f"{player['inventory']}")
+
+def add_item(player, animals):
+    random.choice(ANIMALS["loot"])
 
 def take_action():
     return user_choice(
-        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Quit\n>",
-        ["hunt", "rest", "travel", "quit"]
+        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Inventory\n- Status\n- Eat\n- Quit\n>",
+        ["hunt", "rest", "travel", "inventory", "status", "eat", "quit"]
     )
 
 def rest(player):
@@ -165,7 +203,11 @@ def create_player(name, expertise):
         "name": name,
         "expertise": expertise,
         "health": 100,
-        "inventory": {"food": 0, "berries": 0}
+        "hunger": 100,
+        "inventory": {
+            "food": 0,
+            "loot": []
+            }
     }
 
 #===============================================================
@@ -183,9 +225,12 @@ def main():
     current_location = travel()
 
     while True:
-        show_status(player, current_location)
 
-        if player["health"] <= 0:
+        if player["hunger"] <= 0:
+            print("You have collapsed to the ground as the birds sing and your hunger worsens... GAME OVER!")
+            break
+
+        elif player["health"] <= 0:
             print("You have collapsed to the ground as the birds sing and your injuries worsen... GAME OVER!")
             break
 
@@ -193,12 +238,24 @@ def main():
         
         if action == "hunt":
             hunt(player, current_location)
+            player["hunger"] -= 10
 
         elif action == "rest":
             rest(player)
+            player["hunger"] -= 20
 
         elif action == "travel":
             current_location = travel()
+            player["hunger"] -= 10
+
+        elif action == "inventory":
+            show_inventory(player)
+
+        elif action == "status":
+            show_status(player, current_location)
+
+        elif action == "eat":
+            player["hunger"] += player["food"]
         
         elif action == "quit":
             print("You have returned from the Survival Grounds. Game Ended!")
@@ -206,3 +263,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
