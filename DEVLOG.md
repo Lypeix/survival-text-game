@@ -40,7 +40,7 @@ LOG BOOK
 - Fixed capitalization
 
 29.05.2026 PROGRESS (DAY 4):
-- Visual polishing for eat(player) function.
+- Visual polishing for displays
 - Added hunger_loss(player, amount)
 - Added day counter
 - Added energy value and energy_req(player, amount)
