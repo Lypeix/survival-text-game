@@ -38,3 +38,9 @@ LOG BOOK
 - Added eat(player) function
 - Increased encounter chances
 - Fixed capitalization
+
+29.05.2026 PROGRESS (DAY 4):
+- Visual polishing for eat(player) function.
+- Added hunger_loss(player, amount)
+- Added day counter
+- Added energy value and energy_req(player, amount)
