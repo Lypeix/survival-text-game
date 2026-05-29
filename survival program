@@ -254,6 +254,7 @@ def eat(player):
         food_available = player["inventory"]["food"]
         if food_available == 0:
             print("You have nothing to eat!")
+            return
 
         food_to_eat = min(missing_hunger, food_available)
         player["hunger"] += food_to_eat
