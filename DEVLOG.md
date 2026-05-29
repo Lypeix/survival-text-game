@@ -40,7 +40,10 @@ LOG BOOK
 - Fixed capitalization
 
 29.05.2026 PROGRESS (DAY 4):
-- Visual polishing for displays
-- Added hunger_loss(player, amount)
 - Added day counter
-- Added energy value and energy_req(player, amount)
+- Added energy system
+- Added energy_req(player, amount)
+- Added hunger_loss(player, amount)
+- Updated hunt and travel to require energy
+- Rest now restores health and energy
+- Improved eat(player) 
