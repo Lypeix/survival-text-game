@@ -138,7 +138,7 @@ def travel(player):
 
 def hunt(player, location):
     if energy_req(player, 30) == False:
-        return None
+        return False 
     
     animal_key = random.choice(LOCATIONS[location]["animals"])
     animal = ANIMALS[animal_key]
@@ -183,7 +183,7 @@ def hunt(player, location):
             found_item = add_misc(player, misc)
             print(f"Health: {player['health']}")
             print(f"Loot: {meat} KG of Meat and {found_item.title()}")
-        
+        return True
     
     else:
         print("You decide it's not a good idea...")
@@ -268,7 +268,7 @@ def eat(player):
 
 def create_player(name, expertise):
     return {
-        "day": 0,
+        "day": 1,
         "name": name,
         "expertise": expertise,
         "health": 100,
@@ -307,16 +307,19 @@ def main():
         action = take_action()
         
         if action == "hunt":
-            hunt(player, current_location)
-            hunger_loss(player, 10)
+            hunt_happened = hunt(player, current_location)
+            if hunt_happened:
+                hunger_loss(player, 10)
 
         elif action == "rest":
             rest(player)
             hunger_loss(player, 20)
 
         elif action == "travel":
-            current_location = travel(player)
-            hunger_loss(player, 10)
+            new_location = travel(player)
+            if new_location is not None: 
+                current_location = new_location
+                hunger_loss(player, 10)
 
         elif action == "inventory":
             show_inventory(player)
