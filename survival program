@@ -111,19 +111,35 @@ def user_choice(prompt, valid_choices):
         else:
             print(f"Invalid choice! Choose from: {', '.join(valid_choices)}")
 
+def energy_req(player, amount):
+    if player["energy"] < 0:
+        player["energy"] = 0
+    
+    if player["energy"] < amount:
+        print(f"You don't have enough energy to take this action.")
+        return False
+
+    player["energy"] -= amount
+    return True
+
 def location_choice():
-    choice = user_choice("Where shall you head to?\n- Riverside\n- Forest\n- Plains\n>",
+    choice = user_choice("Where shall you head to?\n- Riverside\n- Forest\n- Plains\n> ",
                               LOCATIONS.keys()
                               )
     return choice
 
-def travel():
+def travel(player):
+    if energy_req(player, 20) == False:
+        return None
     choice = location_choice()
     loc = LOCATIONS[choice]
     print(f"You travel to {loc['name']}... {loc['desc']}!")
     return choice
 
 def hunt(player, location):
+    if energy_req(player, 30) == False:
+        return None
+    
     animal_key = random.choice(LOCATIONS[location]["animals"])
     animal = ANIMALS[animal_key]
     
@@ -143,7 +159,7 @@ def hunt(player, location):
     if "encounter_chance_bonus" in bonus:
         animal_encounter_chance += bonus["encounter_chance_bonus"]
 
-    answer =  user_choice(f"You spot a {animal_key}! Would you like to engage?\n Yes\n No\n>", ["yes", "no"])
+    answer =  user_choice(f"You spot a {animal_key}! Would you like to engage?\n Yes\n No\n> ", ["yes", "no"])
     if answer == "yes":
         if encounter_roll > min(animal_encounter_chance, 1):
             print(f"You slip up and the {animal_key} escapes before you can act...")
@@ -175,9 +191,11 @@ def hunt(player, location):
 
 def show_status(player, current_location):
     print("\n-=-!STATUS!-=-")
+    print(f"Day: {player['day']}")
     print(f"Location: {LOCATIONS[current_location]['name']}")
     print(f"Name: {player['name']}")
     print(f"Expertise: {EXPERTISES[player['expertise']]['name']}")
+    print(f"Energy: {player['energy']}")
     print(f"Hunger: {player['hunger']}")
     print(f"Health: {player['health']}")
 
@@ -203,7 +221,7 @@ def add_misc(player, misc_list):
 
 def take_action():
     return user_choice(
-        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Inventory\n- Status\n- Eat\n- Quit\n>",
+        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Inventory\n- Status\n- Eat\n- Quit\n> ",
         ["hunt", "rest", "travel", "inventory", "status", "eat", "quit"]
     )
 
@@ -214,7 +232,18 @@ def rest(player):
     if player["health"] > 100:
         player["health"] = 100
         
-    print(f"You rest and recover {heal_amount} HP! You are now at {player['health']} HP!")
+    print(f"The day passes, while you rest and recover {heal_amount} HP. You are now at {player['health']} HP!")
+    player["day"] += 1
+    player["energy"] += 100
+    if player["energy"] > 100:
+        player["energy"] = 100
+
+def hunger_loss(player, amount):
+    player["hunger"] -= amount
+    
+    if player["hunger"] < 0:
+        player["hunger"] = 0
+       
 
 def eat(player):
     if player["hunger"] == 100:
@@ -223,6 +252,8 @@ def eat(player):
     else:
         missing_hunger = 100 - player["hunger"]
         food_available = player["inventory"]["food"]
+        if food_available == 0:
+            print("You have nothing to eat!")
 
         food_to_eat = min(missing_hunger, food_available)
         player["hunger"] += food_to_eat
@@ -233,12 +264,15 @@ def eat(player):
         if player["hunger"] > 100:
             player["hunger"] = 100
 
+
 def create_player(name, expertise):
     return {
+        "day": 0,
         "name": name,
         "expertise": expertise,
         "health": 100,
         "hunger": 100,
+        "energy": 100,
         "inventory": {
             "food": 0,
             "misc": []
@@ -249,7 +283,7 @@ def create_player(name, expertise):
 
 def main():
     player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
-    player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n>", 
+    player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n> ", 
                                 EXPERTISES.keys()
                                 )
 
@@ -257,7 +291,7 @@ def main():
 
     print(f"Alright, {player_name}! You are about to set out on a grand survival adventure, use your superb {EXPERTISES[player_expertise]['name']} skills to survive and recruit strangers into your crew!")
 
-    current_location = travel()
+    current_location = travel(player)
 
     while True:
 
@@ -273,15 +307,15 @@ def main():
         
         if action == "hunt":
             hunt(player, current_location)
-            player["hunger"] -= 10
+            hunger_loss(player, 10)
 
         elif action == "rest":
             rest(player)
-            player["hunger"] -= 20
+            hunger_loss(player, 20)
 
         elif action == "travel":
-            current_location = travel()
-            player["hunger"] -= 10
+            current_location = travel(player)
+            hunger_loss(player, 10)
 
         elif action == "inventory":
             show_inventory(player)
