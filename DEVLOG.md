@@ -55,3 +55,4 @@ LOG BOOK
 - Added choose_fish function with upgraded RNG system
 - Rebalanced energy and food variables
 - Split action choices into several lines instead of single lines for increased readability and comfort
+- Quick debugging of common issues through pattern recognition
