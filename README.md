@@ -6,12 +6,22 @@ Goals:
 - First "bigger" project 
 - Reinforcement of previously learned concepts
 - Expansion of Python knowledge
-- Improve coding structure and readability
+- Improve coding skills
+- Improve code structure and readability.
 - Fun
+- Reduce AI reliance 
 
 Features:
-- Dynamic hunting system with probability-based encounters
-- Animal-based combat with risk and damage mechanics
-- Expertise system (Navigator, Hunter, Cook) affecting gameplay
-- Location-based exploration system
-- Player health and food survival mechanics
+- Location-based exploration system.
+- Dynamic hunting system with probability-based encounters.
+- Animal-based risk, damage, meat, and misc loot.
+- Expertise system:
+  - Navigator improves encounter chances.
+  - Hunter lowers hunt risk.
+  - Cook improves food gain.
+- Inventory system with food and miscellaneous loot.
+- Player survival stats: health, hunger, energy and day counter.
+- Eating, resting, traveling and hunting actions.
+- Camp/hub system with camp-exclusive actions.
+- Fishing system foundation with RNG through choose_fish().
+- Expanded animal and fish data dictionaries.
