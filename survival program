@@ -335,7 +335,7 @@ def fish(player, location):
     food = fish_data["consumable_kg"]
     
     if "calorie_bonus" in EXPERTISES[player["expertise"]]:
-        food *= 1 + EXPERTISES[player["expertises"]]["calorie_bonus"] / 100
+        food *= 1 + EXPERTISES[player["expertise"]]["calorie_bonus"] / 100
 
     add_food(player, food)
     print(f"You have caught a {fish_key}!")
@@ -366,7 +366,9 @@ def camp(player, current_location):
             eat(player)
 
         elif action == "fish":
-            print("Fishing is not added yet.")
+            fish_happened = fish(player, current_location)
+            if fish_happened:
+                hunger_loss(player, 5)
 
         elif action == "gather wood":
             print("Gathering wood is not added yet.")
