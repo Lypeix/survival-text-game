@@ -327,8 +327,21 @@ def fish(player, location):
     if energy_req(player, 5) == False:
         return False
     
+    print(f"You rest near the coast of the river, grab your rod and cast the line as birds sing and water calmly moves...")
+    fish_key = choose_fish(location)
+    fish_data = FISHES[fish_key]
+
+    food = fish_data["consumable_kg"]
     
-    random.choice()
+    if "calorie_bonus" in EXPERTISES[player["expertises"]]:
+        food *= 1 + EXPERTISES[player["expertises"]]["calorie_bonus"] / 100
+
+    add_food(player, food)
+    print(f"You have caught a {fish_key}!")
+    print(f"Rarity: {fish_data["rarity"]}")
+    print(f"You have gained {food} kg of food.")
+
+    return True
 
 def camp_action():
     return user_choice(
@@ -444,7 +457,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
 
 
