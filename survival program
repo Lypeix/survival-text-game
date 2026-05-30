@@ -61,8 +61,9 @@ ANIMALS = {
 
 FISHES = {
     "salmon": {
-    "consumable_kg": 20,
-    "encounter_chance": 0.5,
+        "consumable_kg": 20,
+        "encounter_chance": 0.5,
+        "rarity": "common"
     },
 
     "trout": {
@@ -333,12 +334,12 @@ def fish(player, location):
 
     food = fish_data["consumable_kg"]
     
-    if "calorie_bonus" in EXPERTISES[player["expertises"]]:
+    if "calorie_bonus" in EXPERTISES[player["expertise"]]:
         food *= 1 + EXPERTISES[player["expertises"]]["calorie_bonus"] / 100
 
     add_food(player, food)
     print(f"You have caught a {fish_key}!")
-    print(f"Rarity: {fish_data["rarity"]}")
+    print(f"Rarity: {fish_data['rarity']}")
     print(f"You have gained {food} kg of food.")
 
     return True
