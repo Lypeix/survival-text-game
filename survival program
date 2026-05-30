@@ -19,7 +19,7 @@ ANIMALS = {
     },
     
     "rabbit": {
-        "meat_kg": 20,
+        "meat_kg": 30,
         "risk": 0.15,
         "encounter_chance": 0.8,
         "damage": 5,
@@ -27,7 +27,7 @@ ANIMALS = {
     },
     
     "boar": {
-        "meat_kg": 55,
+        "meat_kg": 65,
         "risk": 0.55,
         "encounter_chance": 0.5,
         "damage": 30,
@@ -35,7 +35,7 @@ ANIMALS = {
     },
 
     "wolf": {
-        "meat_kg": 35,
+        "meat_kg": 50,
         "risk": 0.65,
         "encounter_chance": 0.65,
         "damage": 40,
@@ -56,6 +56,42 @@ ANIMALS = {
         "encounter_chance": 0.48,
         "damage": 55,
         "misc": ["moose hide", "large antlers", "dense fur"]
+    }
+}
+
+FISHES = {
+    "salmon": {
+    "consumable_kg": 20,
+    "encounter_chance": 0.5,
+    },
+
+    "trout": {
+        "consumable_kg": 15,
+        "encounter_chance": 0.6,
+        "rarity": "common"
+    },
+
+    "pike": {
+        "consumable_kg": 25,
+        "encounter_chance": 0.35,
+        "rarity": "uncommon"
+    },
+
+    "catfish": {
+        "consumable_kg": 55,
+        "encounter_chance": 0.25,
+        "rarity": "uncommon"
+    },
+
+    "sturgeon": {
+        "consumable_kg": 80,
+        "encounter_chance": 0.1,
+        "rarity": "rare"
+    },
+    "Ultra Omega Fish Alpha King of the Seas": {
+        "consumable_kg": 1000,
+        "encounter_chance": 0.01,
+        "rarity": "THE MYTH THE LEGEND"
     }
 }
 
@@ -84,18 +120,21 @@ LOCATIONS = {
     "riverside": {
         "name": "Riverside",
         "animals": ["rabbit", "deer", "moose"],
+        "fishes": ["salmon", "trout", "pike", "catfish", "sturgeon", "Ultra Omega Fish Alpha King of the Seas"],
         "desc": "A calm river cutting through the land. Life gathers here to drink and survive"
     },
 
     "forest": {
         "name": "Deep Forest",
         "animals": ["bear", "deer", "boar", "rabbit", "wolf", "moose"],
+        "fishes": ["trout", "pike", "catfish"],
         "desc": "Dense, shadowed woods where every step feels watched. Dangerous, but full of life"
     },
 
     "plains": {
         "name": "Open Plains",
         "animals": ["deer", "rabbit", "boar", "bison", "wolf"],
+        "fishes": ["trout"],
         "desc": "Wide, wind-swept fields stretching endlessly under an open sky"
     }
 }
@@ -129,7 +168,7 @@ def location_choice():
     return choice
 
 def travel(player):
-    if energy_req(player, 20) == False:
+    if energy_req(player, 10) == False:
         return None
     choice = location_choice()
     loc = LOCATIONS[choice]
@@ -137,7 +176,7 @@ def travel(player):
     return choice
 
 def hunt(player, location):
-    if energy_req(player, 30) == False:
+    if energy_req(player, 20) == False:
         return False 
     
     animal_key = random.choice(LOCATIONS[location]["animals"])
@@ -187,7 +226,7 @@ def hunt(player, location):
     
     else:
         print("You decide it's not a good idea...")
-        return
+        return False
 
 def show_status(player, current_location):
     print("\n-=-!STATUS!-=-")
@@ -202,7 +241,8 @@ def show_status(player, current_location):
 def show_inventory(player):
     print("\n-=-!INVENTORY!-=-")
     print(f"Food: {player['inventory']['food']} kg")
-    
+    print(f"Building materials: {player['inventory']['building_materials']}")
+
     if len(player["inventory"]["misc"]) == 0:
         print("You have no miscellaneous items in your inventory")
     else:
@@ -221,8 +261,15 @@ def add_misc(player, misc_list):
 
 def take_action():
     return user_choice(
-        "\nChoose your action:\n- Hunt\n- Rest\n- Travel\n- Inventory\n- Status\n- Eat\n- Quit\n> ",
-        ["hunt", "rest", "travel", "inventory", "status", "eat", "quit"]
+        "\nType in your desired action:" 
+        "\n- Hunt" 
+        "\n- Travel" 
+        "\n- Inventory" 
+        "\n- Status" 
+        "\n- Camp" 
+        "\n- Quit" 
+        "\n> ",
+        ["hunt", "travel", "inventory", "status", "camp", "quit"]
     )
 
 def rest(player):
@@ -265,6 +312,69 @@ def eat(player):
         if player["hunger"] > 100:
             player["hunger"] = 100
 
+def choose_fish(location):
+    available_fishes = LOCATIONS[location]['fishes']
+
+    chances = []
+
+    for fish_name in available_fishes:
+        chances.append(FISHES[fish_name]['encounter_chance'])
+    
+    fish_key = random.choices(available_fishes, weights=chances, k=1)[0]
+    return fish_key
+
+def fish(player, location):
+    if energy_req(player, 5) == False:
+        return False
+    
+    
+    random.choice()
+
+def camp_action():
+    return user_choice(
+        "\nType in your desired action:"
+        "\n- Eat"
+        "\n- Fish"
+        "\n- Gather Wood"
+        "\n- Rest"
+        "\n- Build"
+        "\n- Status"
+        "\n- Leave"
+        "\n> ",
+        ["eat", "fish", "gather wood", "rest", "build", "status", "leave"]
+    )
+
+def camp(player, current_location):
+    print("\n-=-!CAMP!-=-")
+    while True:
+        action = camp_action()
+        if action == "eat":
+            eat(player)
+
+        elif action == "fish":
+            print("Fishing is not added yet.")
+
+        elif action == "gather wood":
+            print("Gathering wood is not added yet.")
+            hunger_loss(player, 10)
+
+        elif action == "rest":
+            rest(player)
+            hunger_loss(player, 20)
+            
+        elif action == "build":
+            print("Building is not added yet.")
+        
+        elif action == "status":
+            show_status(player, current_location)
+
+        elif action == "leave":
+            print("You leave the camp.")
+            break
+    
+
+
+
 
 def create_player(name, expertise):
     return {
@@ -275,8 +385,9 @@ def create_player(name, expertise):
         "hunger": 100,
         "energy": 100,
         "inventory": {
-            "food": 0,
-            "misc": []
+            'food': 0,
+            'misc': [],
+            'building_materials': []
             }
     }
 
@@ -311,10 +422,6 @@ def main():
             if hunt_happened:
                 hunger_loss(player, 10)
 
-        elif action == "rest":
-            rest(player)
-            hunger_loss(player, 20)
-
         elif action == "travel":
             new_location = travel(player)
             if new_location is not None: 
@@ -327,8 +434,9 @@ def main():
         elif action == "status":
             show_status(player, current_location)
 
-        elif action == "eat":
-            eat(player)
+        elif action == "camp":
+            print("You set up a tent and campfire, laying the foundations for what will one day become a great campsite!")
+            camp(player, current_location)
         
         elif action == "quit":
             print("You have returned from the Survival Grounds. Game Ended!")
@@ -336,5 +444,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
 
 
