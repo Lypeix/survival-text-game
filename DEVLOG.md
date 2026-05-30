@@ -47,3 +47,11 @@ LOG BOOK
 - Updated hunt and travel to require energy
 - Rest now restores health and energy
 - Improved eat(player) 
+
+30.05.2026 PROGRESS (DAY 5):
+- Added Camping System
+- Added Camp-Exclusive Actions
+- Added Fishing and Fish Variables Group
+- Added choose_fish function with upgraded RNG system
+- Rebalanced energy and food variables
+- Split action choices into several lines instead of single lines for increased readability and comfort
