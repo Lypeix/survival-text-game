@@ -56,3 +56,10 @@ LOG BOOK
 - Rebalanced energy and food variables
 - Split action choices into several lines instead of single lines for increased readability and comfort
 - Quick debugging of common issues through pattern recognition
+
+31.05.2025 PROGRESS (DAY 6):
+- Fishes are no longer guaranteed to appear
+- Added Materials into the Dictionary
+- Added gather_wood and choose_wood_event functions
+- Added wood_events dictionary
+- Add gather_wood as a camp action
