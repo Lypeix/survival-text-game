@@ -140,6 +140,35 @@ LOCATIONS = {
     }
 }
 
+WOOD_EVENTS = {
+    "animal_attack": {
+        "chance": 0.2
+    },
+
+    "bad_harvest": {
+        "chance": 0.3,
+        "wood_gain": 2
+    },
+
+    "medium_harvest": {
+        "chance": 0.5,
+        "wood_gain": 4
+    },
+
+    "excellent_harvest": {
+        "chance": 0.3,
+        "wood_gain": 8
+    }
+}
+
+MATERIALS = {
+    "wood": {
+        "name": "Wood",
+        "craftables": ["sticks", "planks"]
+        }
+
+}
+
 #===============================================================
 
 def user_choice(prompt, valid_choices):
@@ -327,20 +356,75 @@ def choose_fish(location):
 def fish(player, location):
     if energy_req(player, 5) == False:
         return False
-    
-    print(f"You rest near the coast of the river, grab your rod and cast the line as birds sing and water calmly moves...")
-    fish_key = choose_fish(location)
-    fish_data = FISHES[fish_key]
 
-    food = fish_data["consumable_kg"]
-    
-    if "calorie_bonus" in EXPERTISES[player["expertise"]]:
-        food *= 1 + EXPERTISES[player["expertise"]]["calorie_bonus"] / 100
+    fish_encounter_chance = 0.7
+    encounter_roll = random.random()
 
-    add_food(player, food)
-    print(f"You have caught a {fish_key}!")
-    print(f"Rarity: {fish_data['rarity']}")
-    print(f"You have gained {food} kg of food.")
+    if encounter_roll < fish_encounter_chance:
+        print(f"You rest near the coast of the river, grab your rod and cast the line as birds sing and water calmly moves...")
+        fish_key = choose_fish(location)
+        fish_data = FISHES[fish_key]
+        food = fish_data["consumable_kg"]   
+
+        if "calorie_bonus" in EXPERTISES[player["expertise"]]:
+            food *= 1 + EXPERTISES[player["expertise"]]["calorie_bonus"] / 100
+
+        add_food(player, food)
+        print(f"You have caught a {fish_key}!")
+        print(f"Rarity: {fish_data['rarity']}")
+        print(f"You have gained {food} kg of food.")
+    else:
+        print("Hmm... no bite... maybe next time?")
+        return False
+    
+    return True
+
+def choose_wood_event():
+
+    event_names = list(WOOD_EVENTS.keys())    
+    weights = []
+
+    for event_name in event_names:
+        weights.append(WOOD_EVENTS[event_name]["chance"])
+
+    event_key = random.choices(event_name, weights=weights, k=1)[0]
+    return event_key
+
+def gather_wood(player):
+    if energy_req(player, 10) == False:
+        return False
+
+    print(f"You grab your axe and go out in the woods...")
+
+    event_key = choose_wood_event
+
+    if event_key == "animal_attack":
+        print("Upon your venture towards the woods, you are swarmed by a pack of wolves and forced to run, barely managing to escape!")
+        player["energy"] -= 10
+
+    wood_gain = WOOD_EVENTS[event_key]["wood_gain"]
+
+    if event_key == "bad_harvest":
+        
+        print("You spend your time wandering around the woods, however you can barely find any suitable trees to chop...")        
+        print(f"Result: {wood_gain} Wood!")
+        
+        player["inventory"]["building_materials"] += wood_gain
+   
+    elif event_key == "medium_harvest":
+
+        print("You spend your time wandering around the wood, finding suitable amount of trees to chop.")
+        print(f"Result: {wood_gain} Wood!")
+
+        player["inventory"]["building_materials"] += wood_gain
+
+    elif event_key == "good_harvest":
+
+        print("You spend your time wandering around the wood, finding suitable amount of trees to chop.")
+        print(f"Result: {wood_gain} Wood!")
+
+        player["inventory"]["building_materials"] += wood_gain
+
 
     return True
 
@@ -371,8 +455,9 @@ def camp(player, current_location):
                 hunger_loss(player, 5)
 
         elif action == "gather wood":
-            print("Gathering wood is not added yet.")
-            hunger_loss(player, 10)
+            gathering_happened = gather_wood(player)
+            if gathering_happened:
+                hunger_loss(player, 10)
 
         elif action == "rest":
             rest(player)
@@ -389,9 +474,6 @@ def camp(player, current_location):
             break
     
 
-
-
-
 def create_player(name, expertise):
     return {
         "day": 1,
@@ -403,7 +485,7 @@ def create_player(name, expertise):
         "inventory": {
             'food': 0,
             'misc': [],
-            'building_materials': []
+            'building_materials': 0
             }
     }
 
