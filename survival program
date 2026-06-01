@@ -166,6 +166,26 @@ MATERIALS = {
         "name": "Wood",
         "craftables": ["sticks", "planks"]
         }
+}
+
+BUILDINGS = {
+    "campfire": {
+        "name": "Campfire",
+        "wood_req": 5,
+        "max_energy_bonus": 10
+    },
+    
+    "shelter": {
+        "name": "Shelter",
+        "wood_req": 10,
+        "max_energy_bonus": 20
+    },
+    
+    "storage": {
+        "name": "Storage",
+        "wood_req": 15,
+        "max_hunger_bonus": 20
+    },
 
 }
 
@@ -428,6 +448,43 @@ def gather_wood(player):
 
     return True
 
+def build_action(player):
+        return user_choice(
+            "\nWhat would you like to build?"
+            "\n- Campfire"
+            "\n- Shelter"
+            "\n- Storage"
+            "\n- Quit"
+            "\n> ",
+            ["campfire", "shelter", "storage"]
+        )
+
+
+
+def build(player):
+    if energy_req(player, 10) == False:
+        return False
+    action = build_action(player)
+
+    material_req = BUILDINGS["wood_req"]
+
+    if player["wood"] < material_req:
+        print("Insufficient materials!")
+
+    if action == "quit":
+        print("You decide to not build anything.")
+        return False
+
+    if action == "campfire":
+        print(f"You have built a campfire!")
+
+    elif action == "shelter":
+        print(f"You have built a shelter!")
+    
+    elif action == "storage":
+        print(f"You have built a storage!")
+
+    return True
 
 def camp_action():
     return user_choice(
@@ -486,7 +543,7 @@ def create_player(name, expertise):
         "inventory": {
             'food': 0,
             'misc': [],
-            'building_materials': 0
+            'wood': 0
             }
     }
 
