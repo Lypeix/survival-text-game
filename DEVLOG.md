@@ -57,14 +57,14 @@ LOG BOOK
 - Split action choices into several lines instead of single lines for increased readability and comfort
 - Quick debugging of common issues through pattern recognition
 
-31.05.2025 PROGRESS (DAY 6):
+31.05.2026 PROGRESS (DAY 6):
 - Fishes are no longer guaranteed to appear
 - Added Materials into the Dictionary
 - Added gather_wood and choose_wood_event functions
 - Added wood_events dictionary
 - Add gather_wood as a camp action
 
-01.06.2025 LIGHT (DAY 7):
+01.06.2026 LIGHT (DAY 7):
 - Reconstructed choose_wood_event() and choose_fish()
 - Fixed bugs in gather_wood(player) and choose_wood_event()
 - Added Building variables
