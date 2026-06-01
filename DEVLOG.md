@@ -65,6 +65,9 @@ LOG BOOK
 - Add gather_wood as a camp action
 
 31.05.2025 LIGHT (DAY 7):
-- Consolidation and reconstruction day
-- Reconstructed choose_wood_event()
-- Fixed gather_wood(player)
+- Reconstructed choose_wood_event() and choose_fish()
+- Fixed bugs in gather_wood(player) and choose_wood_event()
+- Added Building variables
+- Added build_action()
+- Added build(), unfinished
+- Laid foundations for building mechanics
