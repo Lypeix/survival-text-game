@@ -381,13 +381,13 @@ def fish(player, location):
 
 def choose_wood_event():
 
-    event_names = list(WOOD_EVENTS.keys())    
+    event_names = list(WOOD_EVENTS.keys())
     weights = []
 
     for event_name in event_names:
         weights.append(WOOD_EVENTS[event_name]["chance"])
-
-    event_key = random.choices(event_name, weights=weights, k=1)[0]
+        
+    event_key = random.choices(event_names, weights=weights, k=1)[0]
     return event_key
 
 def gather_wood(player):
@@ -396,11 +396,12 @@ def gather_wood(player):
 
     print(f"You grab your axe and go out in the woods...")
 
-    event_key = choose_wood_event
+    event_key = choose_wood_event()
 
     if event_key == "animal_attack":
         print("Upon your venture towards the woods, you are swarmed by a pack of wolves and forced to run, barely managing to escape!")
         player["energy"] -= 10
+        return True
 
     wood_gain = WOOD_EVENTS[event_key]["wood_gain"]
 
@@ -418,15 +419,15 @@ def gather_wood(player):
 
         player["inventory"]["building_materials"] += wood_gain
 
-    elif event_key == "good_harvest":
+    elif event_key == "excellent_harvest":
 
-        print("You spend your time wandering around the wood, finding suitable amount of trees to chop.")
+        print("You spend your time wandering around the wood, finding extraordinary amount of trees to chop!")
         print(f"Result: {wood_gain} Wood!")
 
         player["inventory"]["building_materials"] += wood_gain
 
-
     return True
+
 
 def camp_action():
     return user_choice(
