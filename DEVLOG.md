@@ -64,7 +64,7 @@ LOG BOOK
 - Added wood_events dictionary
 - Add gather_wood as a camp action
 
-31.05.2025 LIGHT (DAY 7):
+01.06.2025 LIGHT (DAY 7):
 - Reconstructed choose_wood_event() and choose_fish()
 - Fixed bugs in gather_wood(player) and choose_wood_event()
 - Added Building variables
