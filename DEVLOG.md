@@ -64,5 +64,5 @@ LOG BOOK
 - Added wood_events dictionary
 - Add gather_wood as a camp action
 
-31.05.2025 PROGRESS (DAY 7):
+31.05.2025 LIGHT (DAY 7):
 - Consolidation and reconstruction day
