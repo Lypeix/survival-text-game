@@ -66,3 +66,5 @@ LOG BOOK
 
 31.05.2025 LIGHT (DAY 7):
 - Consolidation and reconstruction day
+- Reconstructed choose_wood_event()
+- Fixed gather_wood(player)
