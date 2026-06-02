@@ -456,33 +456,32 @@ def build_action(player):
             "\n- Storage"
             "\n- Quit"
             "\n> ",
-            ["campfire", "shelter", "storage"]
+            ["campfire", "shelter", "storage", "quit"]
         )
 
 
 
 def build(player):
-    if energy_req(player, 10) == False:
-        return False
     action = build_action(player)
 
-    material_req = BUILDINGS["wood_req"]
-
-    if player["wood"] < material_req:
-        print("Insufficient materials!")
+    building = BUILDINGS["action"]
+    material_req = building["wood_req"]
 
     if action == "quit":
         print("You decide to not build anything.")
         return False
 
-    if action == "campfire":
-        print(f"You have built a campfire!")
+    if player["inventory"]["wood"] < material_req:
+        print("Insufficient materials!")
+        print(f"You need {material_req} to build {building['name']}!")
+        return False
 
-    elif action == "shelter":
-        print(f"You have built a shelter!")
-    
-    elif action == "storage":
-        print(f"You have built a storage!")
+    if energy_req(player, 10) == False:
+        return False
+
+    player["inventory"]["wood"] -= material_req
+    player["buildings"].append(action)
+    print(f"You have built a {building['name']}!")
 
     return True
 
@@ -522,7 +521,9 @@ def camp(player, current_location):
             hunger_loss(player, 20)
             
         elif action == "build":
-            print("Building is not added yet.")
+            build_happened = build(player)
+            if build_happened:
+                hunger_loss(player, 10)
         
         elif action == "status":
             show_status(player, current_location)
@@ -544,7 +545,8 @@ def create_player(name, expertise):
             'food': 0,
             'misc': [],
             'wood': 0
-            }
+            },
+        "buildings": []
     }
 
 #===============================================================
