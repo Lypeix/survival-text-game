@@ -81,3 +81,7 @@ LOG BOOK
 - Expanded eat(player) to include max_hunger calculated based off buildings inside create_player(name, expertise)
 - Updated outdated variable names
 - Fixed logical flaws in hunt(), fish(), rest(), build_action()
+- Updated show_inventory() and show_status()
+- Added materials section in the create_player(), housing crafting materials
+- Updated recipes for buildings and MATERIALS dictionary
+- Updated every ['inventory']['wood'] to ['inventory']['materials']['wood']
