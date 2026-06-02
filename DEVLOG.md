@@ -64,10 +64,19 @@ LOG BOOK
 - Added wood_events dictionary
 - Add gather_wood as a camp action
 
-01.06.2026 LIGHT (DAY 7):
+01.06.2026 PROGRESS (DAY 7):
 - Reconstructed choose_wood_event() and choose_fish()
 - Fixed bugs in gather_wood(player) and choose_wood_event()
 - Added Building variables
 - Added build_action()
 - Added build(), unfinished
 - Laid foundations for building mechanics
+
+02.06.2026 PROGRESS (DAY 8):
+- Finished build(player)
+- Added build(player) to the camp()
+- Added working bonuses for buildings
+- Added "buildings" section to create_player(name, expertise)
+- Expanded rest(player) to include max_energy calculated based off buildings inside create_player(name, expertise)
+- Expanded eat(player) to include max_hunger calculated based off buildings inside create_player(name, expertise)
+- Updated outdated variable names
