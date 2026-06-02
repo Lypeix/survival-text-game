@@ -80,3 +80,4 @@ LOG BOOK
 - Expanded rest(player) to include max_energy calculated based off buildings inside create_player(name, expertise)
 - Expanded eat(player) to include max_hunger calculated based off buildings inside create_player(name, expertise)
 - Updated outdated variable names
+- Fixed logical flaws in hunt(), fish(), rest(), build_action()
