@@ -168,22 +168,39 @@ MATERIALS = {
         }
 }
 
+RECIPES = {
+    "sticks": {
+        "name": "Sticks",
+        "materials": {"wood": 2},
+        "output": {"sticks": 10},
+        "energy_cost": 2
+    },
+
+    "planks": {
+        "name": "Wooden Planks",
+        "materials": {"wood": 2},
+        "output": {"planks": 5},
+        "energy_cost": 3
+    }
+
+}
+
 BUILDINGS = {
     "campfire": {
         "name": "Campfire",
-        "wood_req": 5,
+        "materials": {"sticks": 50, "wood": 5},
         "max_energy_bonus": 10
     },
     
     "shelter": {
         "name": "Shelter",
-        "wood_req": 10,
+        "materials": {"wood": 10},
         "max_energy_bonus": 20
     },
     
     "storage": {
         "name": "Storage",
-        "wood_req": 15,
+        "materials": {"wood": 15},
         "max_hunger_bonus": 20
     },
 
@@ -287,11 +304,15 @@ def show_status(player, current_location):
     print(f"Energy: {player['energy']}")
     print(f"Hunger: {player['hunger']}")
     print(f"Health: {player['health']}")
+    print(f"Buildings: {player['buildings']}")
 
 def show_inventory(player):
     print("\n-=-!INVENTORY!-=-")
     print(f"Food: {player['inventory']['food']} kg")
-    print(f"Wood: {player['inventory']['wood']}")
+    print("Materials:")
+    for mat, amount in player["inventory"]["materials"].items():
+        print(f"- {mat.title()}: {amount}")
+
 
     if len(player["inventory"]["misc"]) == 0:
         print("You have no miscellaneous items in your inventory")
@@ -452,21 +473,21 @@ def gather_wood(player):
         print("You spend your time wandering around the woods, however you can barely find any suitable trees to chop...")        
         print(f"Result: {wood_gain} Wood!")
         
-        player["inventory"]["wood"] += wood_gain
+        player["inventory"]["materials"]["wood"] += wood_gain
    
     elif event_key == "medium_harvest":
 
         print("You spend your time wandering around the wood, finding suitable amount of trees to chop.")
         print(f"Result: {wood_gain} Wood!")
 
-        player["inventory"]["wood"] += wood_gain
+        player["inventory"]["materials"]["wood"] += wood_gain
 
     elif event_key == "excellent_harvest":
 
         print("You spend your time wandering around the wood, finding extraordinary amount of trees to chop!")
         print(f"Result: {wood_gain} Wood!")
 
-        player["inventory"]["wood"] += wood_gain
+        player["inventory"]["materials"]["wood"] += wood_gain
 
     return True
 
@@ -491,13 +512,13 @@ def build(player):
         return False
 
     building = BUILDINGS[action]
-    material_req = building["wood_req"]
+    material_req = building["materials"]
 
     if action in player["buildings"]:
         print(f"You have already constructed a {building['name']}!")
         return False
 
-    if player["inventory"]["wood"] < material_req:
+    if player["inventory"]["materials"]["wood"] < material_req:
         print("Insufficient materials!")
         print(f"You need {material_req} wood to build {building['name']}!")
         return False
@@ -505,7 +526,7 @@ def build(player):
     if energy_req(player, 10) == False:
         return False
 
-    player["inventory"]["wood"] -= material_req
+    player["inventory"]["materials"]["wood"] -= material_req
     player["buildings"].append(action)
     print(f"You have built a {building['name']}!")
 
@@ -572,10 +593,13 @@ def create_player(name, expertise):
         "hunger": 100,
         "energy": 100,
         "inventory": {
-            'food': 0,
-            'misc': [],
-            'wood': 0
+            "food": 0,
+            "materials"                
+                "wood": 0,
+                "sticks": 0,
+                "planks": 0
             },
+            "misc": [],
         "buildings": []
     }
 
