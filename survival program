@@ -512,21 +512,23 @@ def build(player):
         return False
 
     building = BUILDINGS[action]
-    material_req = building["materials"]
 
     if action in player["buildings"]:
         print(f"You have already constructed a {building['name']}!")
         return False
 
-    if player["inventory"]["materials"]["wood"] < material_req:
-        print("Insufficient materials!")
-        print(f"You need {material_req} wood to build {building['name']}!")
-        return False
+    for mat, amount in building["materials"].items():
+        if player["inventory"]["materials"].get(mat, 0) < amount:
+            print("Insufficient materials!")
+            print(f"You need {amount} {mat} to build {building['name']}!")
+            return False
 
     if energy_req(player, 10) == False:
         return False
 
-    player["inventory"]["materials"]["wood"] -= material_req
+    for mat, amount in building["materials"].items():
+        player["inventory"]["materials"][mat] -= amount
+    
     player["buildings"].append(action)
     print(f"You have built a {building['name']}!")
 
