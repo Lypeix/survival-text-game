@@ -291,7 +291,7 @@ def show_status(player, current_location):
 def show_inventory(player):
     print("\n-=-!INVENTORY!-=-")
     print(f"Food: {player['inventory']['food']} kg")
-    print(f"Building materials: {player['inventory']['building_materials']}")
+    print(f"Building materials: {player['inventory']['wood']}")
 
     if len(player["inventory"]["misc"]) == 0:
         print("You have no miscellaneous items in your inventory")
@@ -323,17 +323,30 @@ def take_action():
     )
 
 def rest(player):
-    heal_amount = 10
+    heal_amount = 20
     player["health"] += heal_amount
 
     if player["health"] > 100:
         player["health"] = 100
-        
-    print(f"The day passes, while you rest and recover {heal_amount} HP. You are now at {player['health']} HP!")
+
+    if "campfire" in player["buildings"] and "shelter" in player["buildings"]:
+        max_energy = 130
+
+    elif "shelter" in player["buildings"]:
+        max_energy = 120
+
+    elif "campfire" in player["buildings"]:
+        max_energy = 110
+
+    else:
+        max_energy = 100
+
+    player["energy"] += max_energy
+    if player["energy"] > max_energy:
+        player["energy"] = max_energy
+
+    print(f"The day passes, while you rest and recover {heal_amount} HP and {max_energy} EP. You are now at {player['health']} HP and {player['energy']} EP!")
     player["day"] += 1
-    player["energy"] += 100
-    if player["energy"] > 100:
-        player["energy"] = 100
 
 def hunger_loss(player, amount):
     player["hunger"] -= amount
@@ -343,24 +356,30 @@ def hunger_loss(player, amount):
        
 
 def eat(player):
-    if player["hunger"] == 100:
+    if "storage" in player["buildings"]:
+        max_hunger = 120
+    
+    else:
+        max_hunger = 100
+
+    if player["hunger"] >= max_hunger:
         print("You are already full!")
         return
-    else:
-        missing_hunger = 100 - player["hunger"]
-        food_available = player["inventory"]["food"]
-        if food_available == 0:
-            print("You have nothing to eat!")
-            return
+    
+    missing_hunger = max_hunger - player["hunger"]
+    food_available = player["inventory"]["food"]
+    if food_available == 0:
+        print("You have nothing to eat!")
+        return
 
-        food_to_eat = min(missing_hunger, food_available)
-        player["hunger"] += food_to_eat
-        player["inventory"]["food"] -= food_to_eat
+    food_to_eat = min(missing_hunger, food_available)
+    player["hunger"] += food_to_eat
+    player["inventory"]["food"] -= food_to_eat
 
-        print(f"You have restored {food_to_eat} hunger points!")
+    print(f"You have restored {food_to_eat} hunger points!")
         
-        if player["hunger"] > 100:
-            player["hunger"] = 100
+    if player["hunger"] > max_hunger:
+        player["hunger"] = max_hunger
 
 def choose_fish(location):
     available_fishes = LOCATIONS[location]['fishes']
@@ -430,21 +449,21 @@ def gather_wood(player):
         print("You spend your time wandering around the woods, however you can barely find any suitable trees to chop...")        
         print(f"Result: {wood_gain} Wood!")
         
-        player["inventory"]["building_materials"] += wood_gain
+        player["inventory"]["wood"] += wood_gain
    
     elif event_key == "medium_harvest":
 
         print("You spend your time wandering around the wood, finding suitable amount of trees to chop.")
         print(f"Result: {wood_gain} Wood!")
 
-        player["inventory"]["building_materials"] += wood_gain
+        player["inventory"]["wood"] += wood_gain
 
     elif event_key == "excellent_harvest":
 
         print("You spend your time wandering around the wood, finding extraordinary amount of trees to chop!")
         print(f"Result: {wood_gain} Wood!")
 
-        player["inventory"]["building_materials"] += wood_gain
+        player["inventory"]["wood"] += wood_gain
 
     return True
 
@@ -464,11 +483,15 @@ def build_action(player):
 def build(player):
     action = build_action(player)
 
-    building = BUILDINGS["action"]
-    material_req = building["wood_req"]
-
     if action == "quit":
         print("You decide to not build anything.")
+        return False
+
+    building = BUILDINGS[action]
+    material_req = building["wood_req"]
+
+    if building in player["buildings"]:
+        print(f"You have already constructed a {building['name']}!")
         return False
 
     if player["inventory"]["wood"] < material_req:
