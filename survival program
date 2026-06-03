@@ -171,15 +171,15 @@ MATERIALS = {
 RECIPES = {
     "sticks": {
         "name": "Sticks",
-        "materials": {"wood": 2},
-        "output": {"sticks": 10},
+        "cost": {"wood": 2},
+        "result": {"sticks": 10},
         "energy_cost": 2
     },
 
     "planks": {
         "name": "Wooden Planks",
-        "materials": {"wood": 2},
-        "output": {"planks": 5},
+        "cost": {"wood": 2},
+        "result": {"planks": 5},
         "energy_cost": 3
     }
 
@@ -356,10 +356,15 @@ def get_max_energy(player):
 
 def rest(player):
     heal_amount = 20
+
+    old_health = player["health"]
+
     player["health"] += heal_amount
 
     if player["health"] > 100:
         player["health"] = 100
+
+    health_restored = player["health"] - old_health
 
     max_energy = get_max_energy(player)
 
@@ -369,7 +374,7 @@ def rest(player):
     if energy_restored < 0:
         energy_restored = 0
 
-    print(f"The day passes, while you rest and recover {heal_amount} HP and {energy_restored} EP. You are now at {player['health']} HP and {player['energy']} EP!")
+    print(f"The day passes, while you rest and recover {health_restored} HP and {energy_restored} EP. You are now at {player['health']} HP and {player['energy']} EP!")
     player["day"] += 1
 
 def hunger_loss(player, amount):
@@ -377,7 +382,7 @@ def hunger_loss(player, amount):
     
     if player["hunger"] < 0:
         player["hunger"] = 0
-       
+
 
 def eat(player):
     if "storage" in player["buildings"]:
@@ -534,6 +539,36 @@ def build(player):
 
     return True
 
+def craft(player):
+    recipe_name = user_choice("What would you like to craft today?\n- Sticks\n- Wooden Planks\n- Quit\n > ",
+          list(RECIPES.keys()) + ["quit"]
+        )
+    
+    if recipe_name == "quit":
+        return False
+
+    recipe = RECIPES[recipe_name]
+
+    for mat, amount in recipe["cost"].items():
+        if player["inventory"]["materials"].get(mat, 0) < amount:
+            print("You don't have enough materials!")
+            return False
+        
+    if not energy_req(player, recipe["energy_cost"]):
+        return False
+
+
+    for mat, amount in recipe["cost"].items():
+        player["inventory"]["materials"][mat] -= amount
+        
+    for item, amount in recipe["result"].items(): 
+        player["inventory"]["materials"][item] = \
+            player["inventory"]["materials"].get(item, 0) + amount  
+        
+        
+    print(f"You have successfuly crafted {recipe["name"]}")
+    return True
+    
 def camp_action():
     return user_choice(
         "\nType in your desired action:"
@@ -567,7 +602,7 @@ def camp(player, current_location):
                 hunger_loss(player, 10)
 
         elif action == "craft":
-            print("This action has not been added yet...")
+            craft(player)
 
         elif action == "rest":
             rest(player)
@@ -596,12 +631,13 @@ def create_player(name, expertise):
         "energy": 100,
         "inventory": {
             "food": 0,
-            "materials"                
+            "materials": {                
                 "wood": 0,
                 "sticks": 0,
                 "planks": 0
+                },
+            "misc": [],    
             },
-            "misc": [],
         "buildings": []
     }
 
