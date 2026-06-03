@@ -88,6 +88,7 @@ LOG BOOK
 
 03.06.2026 PROGRESS (DAY 9): 
 - Added crafting() and implemented into the camp()
+- Finished crafting system
 - Fixed Materials list in create_player()
 - Fixed indentation for "misc" in create_player() and moved it inside "inventory"
 - Added dynamic health output in UI for rest()
