@@ -85,3 +85,9 @@ LOG BOOK
 - Added materials section in the create_player(), housing crafting materials
 - Updated recipes for buildings and MATERIALS dictionary
 - Updated every ['inventory']['wood'] to ['inventory']['materials']['wood']
+
+03.06.2026 PROGRESS (DAY 9): 
+- Added crafting() and implemented into the camp()
+- Fixed Materials list in create_player()
+- Fixed indentation for "misc" in create_player() and moved it inside "inventory"
+- Added dynamic health output in UI for rest()
