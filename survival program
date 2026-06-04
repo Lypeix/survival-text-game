@@ -567,9 +567,6 @@ def build(player):
         if player["inventory"]["materials"].get(mat, 0) < amount:
             print(f"You need {amount} {mat} to upgrade this building!")
 
-    if action in player["buildings"]:
-        print(f"You have already constructed a {building_data['name']}!")
-        return False
 
     for mat, amount in building_data["materials"].items():
         if player["inventory"]["materials"].get(mat, 0) < amount:
@@ -582,8 +579,6 @@ def build(player):
 
     for mat, amount in level_data["materials"].items():
         player["inventory"]["materials"][mat] -= amount
-
-
 
     if current_level == 0:
         print(f"You have succesfuly built {action} (Level 1)")
