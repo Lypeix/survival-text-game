@@ -566,12 +566,6 @@ def build(player):
     for mat, amount in level_data["materials"].items():
         if player["inventory"]["materials"].get(mat, 0) < amount:
             print(f"You need {amount} {mat} to upgrade this building!")
-
-
-    for mat, amount in building_data["materials"].items():
-        if player["inventory"]["materials"].get(mat, 0) < amount:
-            print("Insufficient materials!")
-            print(f"You need {amount} {mat} to build {building_data['name']}!")
             return False
 
     if not energy_req(player, 10):
@@ -580,10 +574,12 @@ def build(player):
     for mat, amount in level_data["materials"].items():
         player["inventory"]["materials"][mat] -= amount
 
+    player["buildings"][action] = next_level
+
     if current_level == 0:
         print(f"You have succesfuly built {action} (Level 1)")
     else:
-        print(f"You have upgrade {action["name"]} to {next_level}!")
+        print(f"You have upgraded {building_data['name']} to Level {next_level}!")
     
     return True
 
