@@ -188,22 +188,59 @@ RECIPES = {
 BUILDINGS = {
     "campfire": {
         "name": "Campfire",
-        "materials": {"sticks": 50, "wood": 5},
-        "max_energy_bonus": 10
-    },
-    
-    "shelter": {
-        "name": "Shelter",
-        "materials": {"wood": 10},
-        "max_energy_bonus": 20
-    },
-    
-    "storage": {
-        "name": "Storage",
-        "materials": {"wood": 15},
-        "max_hunger_bonus": 20
+        "levels": {
+            1: {
+                "materials": {"sticks": 30, "wood": 5},
+                "max_energy_bonus": 10
+            },
+            
+            2: {
+                "materials": {"sticks": 70, "wood": 10},
+                "max_energy_bonus": 20
+            },
+
+            3: {
+                "materials": {"sticks": 100, "wood": 20, "planks": 20},
+                "max_energy_bonus": 40
+            }
+        }
     },
 
+    "shelter": {
+        "name": "Shelter",
+        "levels": {
+            1: {
+                "materials": {"wood": 10},
+                "max_energy_bonus": 10
+            },
+            2: {
+                "materials": {"planks": 15},
+                "max_energy_bonus": 25
+            },
+            3: {
+                "materials": {"planks": 40, "wood": 20},
+                "max_energy_bonus": 45
+            }
+        }
+    },
+
+    "storage": {
+        "name": "Storage",
+        "levels": {
+            1: {
+                "materials": {"wood": 15},
+                "max_hunger_bonus": 20
+            },
+            2: {
+                "materials": {"wood": 30, "planks": 10},
+                "max_hunger_bonus": 40
+            },
+            3: {
+                "materials": {"planks": 40},
+                "max_hunger_bonus": 70
+            }
+        }
+    }
 }
 
 
@@ -516,26 +553,38 @@ def build(player):
         print("You decide to not build anything.")
         return False
 
-    building = BUILDINGS[action]
+    building_data = BUILDINGS[action]
+    current_level = player["buildings"][action]
+    next_level = current_level + 1
 
-    if action in player["buildings"]:
-        print(f"You have already constructed a {building['name']}!")
+    if next_level not in building_data[action]:
+        print(f"{building_data['name']} is already at max level!")
         return False
 
-    for mat, amount in building["materials"].items():
+    level_data = building_data["levels"][next_level]
+
+    for mat, amount in level_data["materials"]:
+        if player["inventory"]["materials"].get(mat, 0) < amount:
+            print(f"You need {amount} {mat} to upgrade this building!")
+
+    if action in player["buildings"]:
+        print(f"You have already constructed a {building_data['name']}!")
+        return False
+
+    for mat, amount in building_data["materials"].items():
         if player["inventory"]["materials"].get(mat, 0) < amount:
             print("Insufficient materials!")
-            print(f"You need {amount} {mat} to build {building['name']}!")
+            print(f"You need {amount} {mat} to build {building_data['name']}!")
             return False
 
     if energy_req(player, 10) == False:
         return False
 
-    for mat, amount in building["materials"].items():
+    for mat, amount in building_data["materials"].items():
         player["inventory"]["materials"][mat] -= amount
     
     player["buildings"].append(action)
-    print(f"You have built a {building['name']}!")
+    print(f"You have built a {building_data['name']}!")
 
     return True
 
@@ -566,7 +615,7 @@ def craft(player):
             player["inventory"]["materials"].get(item, 0) + amount  
         
         
-    print(f"You have successfuly crafted {recipe["name"]}")
+    print(f"You have successfuly crafted {recipe['name']}")
     return True
     
 def camp_action():
@@ -638,11 +687,19 @@ def create_player(name, expertise):
                 },
             "misc": [],    
             },
-        "buildings": []
+        "buildings": {
+            "campfire": 0,
+            "shelter": 0,
+            "storage": 0
+            }
     }
 
 #===============================================================
 
+def win_condition(player):
+    return player["day"] >= 30
+        
+        
 def main():
     player_name = input("Welcome to the Survival Grounds, explorer! State your name: ")
     player_expertise = user_choice(f"That's an interesting name you've got! Well, {player_name}! What's your expertise?\n- Navigator\n- Hunter\n- Cook\n> ", 
@@ -656,6 +713,11 @@ def main():
     current_location = travel(player)
 
     while True:
+
+        if win_condition(player):
+            print("Congratulations! You have survived 30 days in the wilderness and successfully beated the game")
+            break
+
 
         if player["hunger"] <= 0:
             print("You have collapsed to the ground as the birds sing and your hunger worsens... GAME OVER!")
@@ -692,7 +754,10 @@ def main():
             print("You have returned from the Survival Grounds. Game Ended!")
             break
 
+
+
+
 if __name__ == "__main__":
     main()
-
+    
 
