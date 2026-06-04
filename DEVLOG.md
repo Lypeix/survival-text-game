@@ -93,5 +93,8 @@ LOG BOOK
 - Fixed indentation for "misc" in create_player() and moved it inside "inventory"
 - Added dynamic health output in UI for rest()
 
-04.06.2026 PROGRESS (DAY 10):
-- Laid foundations for build upgrades
+04.06.2026 ENDING (DAY 10):
+- Added building upgrades
+- Added get_max_hunger()
+- Added win condition
+- Project concluded
