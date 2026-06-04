@@ -24,4 +24,7 @@ Features:
 - Eating, resting, traveling and hunting actions.
 - Camp/hub system with camp-exclusive actions.
 - Fishing system foundation with RNG through choose_fish().
-- Expanded animal and fish data dictionaries.
+- Dynamic energy and hunger
+- Building and upgradesystem
+- Crafting system
+- Win condition
