@@ -383,11 +383,16 @@ def take_action():
 def get_max_energy(player):
     max_energy = 100
 
-    for building_key in player["buildings"]:
+    for building_key, level in player["buildings"].items():
         building = BUILDINGS[building_key]
 
-        if "max_energy_bonus" in building:
-            max_energy += building["max_energy_bonus"]
+        if level == 0:
+            continue
+
+        level_data = building["levels"][level]
+
+        if "max_energy_bonus" in level_data:
+            max_energy += level_data["max_energy_bonus"]
 
     return max_energy
 
