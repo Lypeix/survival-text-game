@@ -557,13 +557,13 @@ def build(player):
     current_level = player["buildings"][action]
     next_level = current_level + 1
 
-    if next_level not in building_data[action]:
+    if next_level not in building_data["levels"]:
         print(f"{building_data['name']} is already at max level!")
         return False
 
     level_data = building_data["levels"][next_level]
 
-    for mat, amount in level_data["materials"]:
+    for mat, amount in level_data["materials"].items():
         if player["inventory"]["materials"].get(mat, 0) < amount:
             print(f"You need {amount} {mat} to upgrade this building!")
 
@@ -577,15 +577,19 @@ def build(player):
             print(f"You need {amount} {mat} to build {building_data['name']}!")
             return False
 
-    if energy_req(player, 10) == False:
+    if not energy_req(player, 10):
         return False
 
-    for mat, amount in building_data["materials"].items():
+    for mat, amount in level_data["materials"].items():
         player["inventory"]["materials"][mat] -= amount
-    
-    player["buildings"].append(action)
-    print(f"You have built a {building_data['name']}!")
 
+
+
+    if current_level == 0:
+        print(f"You have succesfuly built {action} (Level 1)")
+    else:
+        print(f"You have upgrade {action["name"]} to {next_level}!")
+    
     return True
 
 def craft(player):
