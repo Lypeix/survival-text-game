@@ -393,25 +393,24 @@ def get_max_energy(player):
 
 def rest(player):
     heal_amount = 20
-
     old_health = player["health"]
 
-    player["health"] += heal_amount
-
-    if player["health"] > 100:
-        player["health"] = 100
+    player["health"] = min(100, player["health"] + heal_amount)
 
     health_restored = player["health"] - old_health
 
     max_energy = get_max_energy(player)
+    old_energy = player["energy"]
 
-    energy_restored = max_energy - player["energy"]
-    player["energy"] = max_energy 
-    
-    if energy_restored < 0:
-        energy_restored = 0
+    player["energy"] = max_energy
+    energy_restored = max_energy - old_energy
 
-    print(f"The day passes, while you rest and recover {health_restored} HP and {energy_restored} EP. You are now at {player['health']} HP and {player['energy']} EP!")
+    print(
+        f"The day passes, while you rest and recover "
+        f"{health_restored} HP and {energy_restored} EP. "
+        f"You are now at {player['health']} HP and {player['energy']} EP!"
+    )
+
     player["day"] += 1
 
 def hunger_loss(player, amount):
@@ -420,13 +419,20 @@ def hunger_loss(player, amount):
     if player["hunger"] < 0:
         player["hunger"] = 0
 
+def get_max_hunger(player):
+    max_hunger = 100
+
+    for building_key, level in player["buildings"].items():
+        building = BUILDINGS[building_key]
+        level_data = building["levels"][level]
+
+        if "max_hunger_bonus" in level_data:
+            max_hunger += level_data["max_hunger_bonus"]
+
+    return max_hunger
 
 def eat(player):
-    if "storage" in player["buildings"]:
-        max_hunger = 120
-    
-    else:
-        max_hunger = 100
+    max_hunger = get_max_hunger(player)
 
     if player["hunger"] >= max_hunger:
         print("You are already full!")
@@ -709,11 +715,6 @@ def main():
 
     while True:
 
-        if win_condition(player):
-            print("Congratulations! You have survived 30 days in the wilderness and successfully beated the game")
-            break
-
-
         if player["hunger"] <= 0:
             print("You have collapsed to the ground as the birds sing and your hunger worsens... GAME OVER!")
             break
@@ -749,7 +750,9 @@ def main():
             print("You have returned from the Survival Grounds. Game Ended!")
             break
 
-
+        if win_condition(player):
+            print("Congratulations! You have survived 30 days in the wilderness and successfully beated the game")
+            break
 
 
 if __name__ == "__main__":
