@@ -23,7 +23,6 @@ LOG BOOK
    - Navigator improves encounter chance
    - Hunter lowers hunt failure and injury risk
    - Cook improves food gain scaling
-- Rebuilt hunt function from memory
 - Fixed multiple syntax, logic and state-management bugs + issues
 
 28.05.2026 PROGRESS (DAY 3):
@@ -34,7 +33,6 @@ LOG BOOK
 - Split show_status function into show_inventory and show_status
 - show_status no longer shows without player's input during take_action menu
 - Added hunger, depletes by 10-20 depending on action
-- Significantly reduced AI reliance
 - Added eat(player) function
 - Increased encounter chances
 - Fixed capitalization
