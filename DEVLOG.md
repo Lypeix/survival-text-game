@@ -9,7 +9,6 @@ LOG BOOK
   - LOCATIONS
 - Defined animal stats like: meat amount, risk, encounter chance and damage.
 - Added location data with available animals and descriptions.
-- Rebuilt user_choice() from memory after using it in previous text-based-RPG project for reusable input validation.
 - Added location selection and travel logic with location_choice() and travel().
 - Created the first version of the player set-up with name, expertise, health, and food.
 - Built the hunting system using random animal encounters, risk rolls, health loss, and food gain.
